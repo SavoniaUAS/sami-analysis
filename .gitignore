@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.checkpoint/
+sami_data.rds
+sami_data.csv
+README.html

@@ -19,13 +19,19 @@ server <- function(input, output, session) {
   shinyjs::disable("div_actions")
   shinyjs::disable("div_filter")
   shinyjs::disable("btn_download")
-  cat("Welcome to SaMi analysis service!\n")
+  shinyjs::hide("graphsettings")
+  shinyjs::hide("hiding4")
+  cat("> New session! Welcome to SaMi Analysis!\n")
+  options(xts_check_TZ=FALSE) # possible warnings without this
   
   #### Load helper functions ####
   source("helper_functions.R", local = TRUE)
   
-  
-  
+  ### Quit the app ###
+  observeEvent(input$btn_quit, {
+    shinyjs::runjs("setTimeout(function(){window.close();},500);")
+    stopApp()
+  })
   
   
   
@@ -91,9 +97,8 @@ server <- function(input, output, session) {
   # Loads data from SaMi or other source and saves it to values$data
   observeEvent(input$btn_load,{
     tryCatch({
-      msg <- "> Starting data load\n"
-      shinyjs::html(id = "sconsole", html = msg)
-      cat(msg)
+      msg <- paste0("Starting data load")
+      print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=FALSE)
       selected = input$query_select
       query <- ""
       if (selected == 1) {
@@ -135,9 +140,8 @@ server <- function(input, output, session) {
         file <- paste0("examples/",input$sel_exdata,".rds")
         if (file.exists(file)) {
           values$data <- readRDS(file)
-          msg <- paste0("> Loaded file: ",file,"\n")
-          cat(msg)
-          shinyjs::html(id="sconsole",html=msg, add=TRUE)
+          msg <- paste0("Loaded file: ",file)
+          print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
           values$fromsami <- FALSE
           create_timeseries()
         } else {
@@ -147,9 +151,8 @@ server <- function(input, output, session) {
       } else if (selected == 4) {
         if (file.exists(dataf)){
           values$data <- readRDS(dataf)
-          msg <- paste0("> Loaded file: ",dataf,"\n")
-          cat(msg)
-          shinyjs::html(id="sconsole",html=msg, add=TRUE)
+          msg <- paste0("Loaded file: ",dataf)
+          print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
           values$fromsami <- TRUE
           create_timeseries()
         } else {
@@ -161,19 +164,16 @@ server <- function(input, output, session) {
       withProgress(message="Processing data", value=0, {
         tic("Total processing time")
         tic("Loading data from SaMi")
-        msg <- "> Loading data from SaMi service\n"
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
+        msg <- "Loading data from SaMi service"
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
         query <- URLencode(query)
-        msg <- paste0("> Load data using query:\n",query,"\n")
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
+        msg <- paste0("Load data using query:\n",query)
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
         incProgress(0.1, detail="Downloading data")
         #download data and make df from JSON-data
         jsondata <- fromJSON(query)
-        msg <- paste0("> ",capture.output(toc()),"\n")
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
+        msg <- paste0(capture.output(toc()))
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
         req_cols <- c("Data", "Object", "Tag", "TimestampISO8601")
         if (is_empty(jsondata) || !(req_cols %in% colnames(jsondata)) || nrow(jsondata) < 1) {
           stop("Loading data from SaMi failed for some reason")
@@ -184,12 +184,12 @@ server <- function(input, output, session) {
         }
         rows = nrow(jsondata)
         #print messages to output
-        msg <- paste0("> Measurement count:",rows,"\n")
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
-        msg <- paste0("> Starting data conversion\n","> This may take several minutes. Please wait...\n")
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
+        msg <- paste0("Measurement count:",rows)
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
+        msg <- paste0("Starting data conversion")
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
+        msg <- paste0("This may take several minutes. Please wait...")
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
         tic("Data conversion total")
         tic("Spreading SaMi data")
         incProgress(0.2, detail="Converting data")
@@ -205,9 +205,8 @@ server <- function(input, output, session) {
           jdfdata[[x]] <- spread(jdfdata[[x]][c("Tag","Value")], key=Tag, value=Value)
         }
         progress$set(value=1, detail=paste("Measurement",rows,"/",rows))
-        msg <- paste0("> ",capture.output(toc()),"\n")
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
+        msg <- paste0(capture.output(toc()))
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
         incProgress(0.5, detail="Combining data")
         #timing combining operation
         tic("Combining data")
@@ -232,18 +231,14 @@ server <- function(input, output, session) {
         tdf <- as_tibble(bind_cols(Timestamp=time, Object=objects, Tag=tags, Note=notes, 
                                    Latitude=latitude, Longitude=longitude, tdf))
         tdf <- group_by(tdf, Object, Tag)
-        msg <- paste0("> ",capture.output(toc()),"\n")
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
-        msg <- paste0("> ",capture.output(toc()),"\n")
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
-        msg <- paste0("> ",capture.output(toc()),"\n")
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
-        msg <- "> Data loaded succesfully!\n"
-        cat(msg)
-        shinyjs::html(id="sconsole",html=msg, add=TRUE)
+        msg <- paste0(capture.output(toc()))
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
+        msg <- paste0(capture.output(toc()))
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
+        msg <- paste0(capture.output(toc()))
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
+        msg <- "Data loaded succesfully!"
+        print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
         incProgress(0.1, detail="Done")
         Sys.sleep(1)
       })
@@ -251,34 +246,33 @@ server <- function(input, output, session) {
       values$fromsami <- TRUE
       create_timeseries()
       saveRDS(tdf, dataf)
-      msg <- paste0("> Wrote converted data to file: ",dataf,"\n")
-      cat(msg)
-      shinyjs::html(id="sconsole",html=msg, add=TRUE)
+      msg <- paste0("Wrote converted data to file: ",dataf)
+      print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
       write_csv(tdf, dataf_csv)
-      msg <- paste0("> Wrote CSV to file: ",dataf_csv,"\n")
-      cat(msg)
-      shinyjs::html(id="sconsole",html=msg, add=TRUE)
+      msg <- paste0("Wrote CSV to file: ",dataf_csv)
+      print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
     }, 
     warning = function(err) {
-      msg <- paste0("> Warning: ",conditionMessage(err),"\n","> Load terminated\n")
-      cat(msg)
+      msg <- paste0("Warning: ",conditionMessage(err))
+      print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
       print(err)
-      shinyjs::html(id="sconsole",html=msg, add=TRUE)
+      msg <- paste0("Load terminated")
+      print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
+
     },
     error = function(err) {
-      msg <- paste0("> Error: ",conditionMessage(err),"\n","> Load terminated\n")
-      cat(msg)
+      msg <- paste0("Error: ",conditionMessage(err))
+      print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
       print(err)
-      shinyjs::html(id="sconsole",html=msg, add=TRUE)
+      msg <- paste0("Load terminated")
+      print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
     },
     finally = {
-      msg <- paste0("> Loading data ended\n")
-      cat(msg)
-      shinyjs::html(id="sconsole",html=msg, add=TRUE)
+      msg <- paste0("Loading data ended")
+      print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
       msg <- capture.output(print(mem_used()))
-      msg <- paste0("> Memory in use: ", msg, "\n")
-      cat(msg)
-      shinyjs::html(id="sconsole",html=msg, add=TRUE)
+      msg <- paste0("Memory in use: ", msg)
+      print_to_output("sconsole", msg, leading=TRUE, newline=TRUE, append=TRUE)
     }
     )
   })
@@ -290,7 +284,7 @@ server <- function(input, output, session) {
       if (input$sel_downloadwhat == 1) {
         filu <- paste0("SaMi_data_",Sys.Date(),".",input$sel_download)
       } else {
-        filu <- paste0(as.character(input$sel_tstodownload),"_",Sys.Date(),".",input$sel_download)
+        filu <- paste0(substring(as.character(input$sel_tstodownload), 4),"_",Sys.Date(),".",input$sel_download)
       }
       filu
     },
@@ -302,6 +296,11 @@ server <- function(input, output, session) {
         ts <- get_selected_ts(input$sel_tstodownload)
         ddata <- bind_cols(Timestamp=index(ts), as_tibble(coredata(ts)))
       }
+      if (input$cb_exlimitdigits) {
+        digits <- as.integer(input$num_exportdecimals)
+        nums <- vapply(ddata, is.numeric, FUN.VALUE = logical(1))
+        ddata[,nums] <- round(ddata[,nums], digits=digits)
+      }
       selected <- input$sel_download
       if (selected == "csv") {
         write_excel_csv(ddata, file)
@@ -309,9 +308,9 @@ server <- function(input, output, session) {
         write.xlsx(ddata, file, colNames = TRUE)
       } else if (selected == "rds") {
         write_rds(ddata, file)
-      } else if (selected == "ods") {
-        
-      }
+      } else if (selected == "json") {
+        write(toJSON(ddata, pretty=TRUE, na="null", POSIXt="ISO8601", Date="ISO8601", factor="string", digits=4), file)
+      }  
     },
     contentType=NULL
   )
@@ -339,7 +338,9 @@ server <- function(input, output, session) {
       sensors <- names(newdata)[(names(newdata) %in% sensors)]
     }
     #drop unselected objects and tags
-    newdata <- newdata %>% filter(Object %in% objs) %>% filter(Tag %in% tags)
+    if (all(c("Object", "Tag") %in% names(newdata))) {
+      newdata <- newdata %>% filter(Object %in% objs) %>% filter(Tag %in% tags) 
+    }
     if (dropmeas) {
       sensdf <- newdata[,(names(newdata) %in% values$sensors)]
       emptyrows <- apply(sensdf, 1, function(x) all(is.na(x)))
@@ -355,17 +356,28 @@ server <- function(input, output, session) {
     keep <- c(names(newdata)[!(names(newdata) %in% values$sensors)], sensors)
     #drop unselected variables
     newdata <- newdata[,(names(newdata) %in% keep)]
+    #limit by date range
+    newdata <- newdata %>% filter_at(1, all_vars(between(as_date(.), as_date(from), as_date(to))))
+    #remake Object and Tag factors and grouping
     if (all(c("Object", "Tag") %in% names(newdata))) {
-      newdata <- droplevels(newdata)
+      newdata$Object <- fct_explicit_na(factor(as.character(newdata$Object)), na_level="[Empty]")
+      newdata$Tag <- fct_explicit_na(factor(as.character(newdata$Tag)), na_level="[Empty]")
       newdata <- group_by(newdata, Object, Tag)
     }
-    if (overwrite) {
-      saveRDS(newdata, dataf)
-      write_csv(newdata, dataf_csv)
+    if (is.null(newdata) || nrow(newdata) < 1) {
+      values$data <- NULL
+      values$tslist <- NULL
+      print_to_output("sconsole", "Filtered dataset is empty!",leading=TRUE, newline=TRUE, append=TRUE)
+    } else {
+      if (overwrite) {
+        saveRDS(newdata, dataf)
+        write_csv(newdata, dataf_csv)
+      }
+      msg <- paste("Filtering dataset complete.", nrow(newdata), "measurements saved.")
+      print_to_output("sconsole", msg,leading=TRUE, newline=TRUE, append=TRUE)
+      values$data <- newdata
+      create_timeseries()
     }
-    values$data <- newdata
-    create_timeseries()
-    update_filter_tab()
   })
   
   # Updates filter tab
@@ -415,6 +427,29 @@ server <- function(input, output, session) {
     updateSelectInput(session, "sel_tstodownload", choices = create_ts_namelist(TRUE))
   })
   
+  # Opens summary page
+  observeEvent(input$btn_acsummary, {
+    updateTabItems(session, "sidebar", "summary")
+  })
+  
+  # Opens table page
+  observeEvent(input$btn_actable, {
+    updateTabItems(session, "sidebar", "tables")
+  })
+  
+  # Opens plot page
+  observeEvent(input$btn_acplot, {
+    updateTabItems(session, "sidebar", "graphs")
+  })
+  
+  # Opens analysis page
+  observeEvent(input$btn_acanalyse, {
+    updateTabItems(session, "sidebar", "analysis")
+  })
+  
+  
+  
+  
   
   
   
@@ -422,6 +457,8 @@ server <- function(input, output, session) {
   create_ts_page <- function() {
     if(is.null(values$tslist))
       return()
+    # Reset page to default
+    shinyjs::reset("div_tsoptions")
     updateSelectInput(session, "sel_filterts", "Select time series to process", choices = create_ts_namelist(TRUE))
     updateCheckboxGroupInput(session, "cbg_combine_created", "User created time series to combine", 
                              choices = as.list(names(values$tscreated)), inline=TRUE)
@@ -434,7 +471,7 @@ server <- function(input, output, session) {
         withTags(
           tagList(
             p("Some time series were automatically created from loaded dataset."),
-            p("Your dataset doesn't include Object and Tag fields.")
+            p("Your dataset doesn't include Object and Tag fields. Variable names are used as default time series names.")
           )
         )
       })
@@ -465,32 +502,131 @@ server <- function(input, output, session) {
     
     #save all input fields
     ts <- get_selected_ts(input$sel_filterts)
+    editchoice <- as.integer(input$radio_tseditchoice)
+    # aggregation choices
     aggr <- input$sel_aggregation
     createtimes <- input$cb_createtimes
     aggrperiod <- as.integer(input$num_everynperiod)
     aggrmethod <- input$sel_aggregationmethod
-    emptyaggr <- as.integer(input$sel_emptyvalues)
-    emptyvalue <- as.numeric(input$num_emptyvalue)
-    empty <- as.integer(input$sel_emptyvalues)
+    # calculation choices
     calculation <- input$sel_calculation
-    lag <- input$cb_lag
-    lagvalue <- input$num_lag
+    usercalc <- as.character(input$txtin_usertscalculation)
+    rollfunction <- input$sel_rollfunction
+    rollingwindow <- as.integer(input$num_rollingwindow)
+    rolldirection <- input$radio_rightleftroll
+    # smoothing choices
+    smoothmethod <- input$sel_tssmoothmethod
+    # decompose choices
+    decomposemethod <- input$sel_decomposemethod
+    # lag choices
+    lagk <- as.integer(input$num_lag)
+    # general choices
+    emptyvalues <- as.integer(input$sel_emptyvalues)
+    emptyvalue <- as.integer(input$num_emptyvalue)
+    dropduplicatetime <- input$cb_tsdropsametimestamp
     rounding <- input$cb_round
     decimals <- input$num_decimals
+    variablename <- input$txtin_newvariablename
     name <- as.character(input$intxt_ts_name)
     
-    if (aggr != "no") {
-      if (ncol(ts) > 1) {
-        # we have multiple time series
-      } else {
-        # we have one time series
-        ts <- aggregate_timeseries(ts, aggr, aggrperiod, aggrmethod, emptyaggr, emptyvalue, createtimes)
+    # 1 = aggregate, 2 = calculate, 3 = smooth, 4 = decompose, 5 = lag
+    if (editchoice==1) {
+      tsagg <- lapply(ts, aggregate_timeseries, aggr, aggrperiod, aggrmethod, createtimes)
+      if (length(tsagg) == 1) {
+        ts <- tsagg[[1]]
+      } else if (length(tsagg) > 1) {
+        ts <- do.call("merge",tsagg)
+        names(ts) <- names(tsagg)
       }
-    } else {
-      #no resampling
+    } else if (editchoice == 2) {
+      calc <- as.character(input$sel_calculation)
+      if (calc == "user") {
+        error_occured <- FALSE
+        tryCatch ({
+          f <- function(x) { eval(parse(text=usercalc)) }
+          tsnew <- f(ts)
+          if (!is.xts(tsnew)) {
+            stop("Function didn't return valid time series object!")
+          } else {
+            ts <- tsnew
+          }
+        }, error = function(err) {
+          msg <- paste0("Error: ",conditionMessage(err))
+          print_to_output("txt_ts_filtered", msg, leading=FALSE, newline=TRUE, append=TRUE)
+          error_occured <- TRUE
+        })
+        if (error_occured) {
+          msg <- paste0("Stopping time series creation!")
+          print_to_output("txt_ts_filtered", msg, leading=FALSE, newline=TRUE, append=TRUE)
+          return()
+        } else {
+          msg <- paste0("Calculation valid. Continuing time series creation.")
+          print_to_output("txt_ts_filtered", msg, leading=FALSE, newline=TRUE, append=TRUE)
+        }
+      } else if (calc == "roll") {
+        if (rollfunction == "mean") {
+          ts <- rollmean(ts, k=rollingwindow, align=rolldirection)
+        } else if (rollfunction == "median") {
+          if (rollingwindow %% 2 == 0) {
+            rollingwindow <- rollingwindow + 1
+          }
+          ts <- rollmedian(ts, k=rollingwindow, align=rolldirection)
+        } else if (rollfunction == "max") {
+          ts <- rollmax(ts, k=rollingwindow, align=rolldirection)
+        } else if (rollfunction == "sum") {
+          ts <- rollsum(ts, k=rollingwindow, align=rolldirection)
+        }
+      } else if (calc == "log") {
+        ts <- log(ts)
+      } else if (calc == "sqrt") {
+        ts <- sqrt(ts)
+      } else if (calc == "diff") {
+        ts <- diff(ts)
+      }
+    } else if (editchoice == 3) {
+      
+    } else if (editchoice == 4) {
+      
+    } else if (editchoice == 5) {
+      ts <- lag(ts, k=lagk, na.pad=TRUE)
+    }
+    if (dropduplicatetime) {
+      ts <- make.index.unique(ts, drop=TRUE)
+    }
+    if (rounding) {
+      ts <- round(ts, decimals)
+    }
+    if (emptyvalues == 2) {
+      #drop empty values
+      ts <- na.omit(ts)
+    } else if (emptyvalues == 3) {
+      #use given value
+      ts <- na.fill(ts, emptyvalue)
+    } else if (emptyvalues == 4) {
+      #use previous
+      ts <- na.locf(ts, na.rm=TRUE)
+    } else if (emptyvalues == 5) {
+      #use next
+      ts <- na.locf(ts, na.rm=TRUE, fromLast=TRUE)
+    } else if (emptyvalues == 6) {
+      #interpolate
+      ts <- na.approx(ts, na.rm=FALSE)
+    }
+    # rename single variable time series
+    if (ncol(ts) == 1) {
+      names(ts) <- variablename
     }
     # Save new time series and update page
-    values$tscreated[[name]] <- ts
+    if (is.null(ts) || ncol(ts) == 0 || nrow(ts) < 1) {
+      print_to_output("txt_ts_filtered", "Failed to create time series!", append=TRUE)
+      return()
+    } else if (ncol(ts) == 1) {
+      print_to_output("txt_ts_filtered", "Created single variable time series", append=TRUE)
+      values$tscreated[[name]] <- ts
+    } else {
+      print_to_output("txt_ts_filtered", "Created multiple variable time series", append=TRUE)
+      values$tscombined[[name]] <- ts
+    }
     create_ts_page()
   })
   
@@ -518,10 +654,8 @@ server <- function(input, output, session) {
     tsobj <- xts(vals, ts, tzone="Europe/Helsinki")
     names(tsobj) <- name
     values$tscreated[[name]] <- tsobj
-    output$txt_randomcreated <- renderPrint({
-      print(paste("Created time series:", name))
-      print(head(values$tscreated[[name]]))
-    })
+    print_to_output("txt_ts_filtered", "Created random time series", append=FALSE)
+    print_to_output("txt_ts_filtered", head(values$tscreated[[name]]))
     create_ts_page()
   })
   
@@ -548,7 +682,23 @@ server <- function(input, output, session) {
       }
     }
     if (!is.null(combinedts)) {
+      varnametype <- input$sel_combinedvarnames
+      if (varnametype == "old") {
+        createdvars <- NULL
+        for (i in creatednames) {
+          createdvars <- c(createdvars, names(values$tscreated[[i]])[1])
+        }
+        autovars <- NULL
+        for (i in autonames) {
+          autovars <- c(autovars, names(values$tslist[[i]])[1])
+        }
+        names(combinedts) <- c(createdvars, autovars)
+      } else if (varnametype == "ts") {
+        names(combinedts) <- c(creatednames, autonames)
+      }
+      
       values$tscombined[[name]] <- combinedts
+      print_to_output("txt_ts_filtered", "Created combined time series", append=TRUE)
       create_ts_page()
     }
   })
@@ -556,6 +706,8 @@ server <- function(input, output, session) {
   # Deletes time series object
   observeEvent(input$btn_deletets, {
     delete_ts(input$sel_deletablets)
+    msg <- paste0("Deleted time series: ", substring(input$sel_deletablets, 4))
+    print_to_output("txt_ts_filtered", msg, append=TRUE)
     create_ts_page()
   })
   
@@ -563,23 +715,32 @@ server <- function(input, output, session) {
   observeEvent(input$sel_filterts, {
     if (is.null(values$tslist)) return()
     ts <- get_selected_ts(input$sel_filterts)
-    updateTextInput(session,"txtin_newvariablename", value=colnames(ts)[1])
-    tssummary <- create_ts_summary(ts)
-    output$txt_ts_summary <- renderText({
-      tssummary
-    })
-    if (!is.null(ts) && length(ts) > 0) {
+    if (!is.null(ts) && ncol(ts) > 0 && nrow(ts) > 0) {
+      tsname <- substring(input$sel_filterts,4)
+      tssummary <- create_ts_summary(ts, tsname)
+      output$txt_ts_summary <- renderText({
+        tssummary
+      })
+      shinyjs::hide("div_newtsvarname")
+      if (ncol(ts) == 1) {
+        shinyjs::show("div_newtsvarname")
+        updateTextInput(session,"txtin_newvariablename", value=colnames(ts)[1])
+      }
+      updateTextInput(session, "intxt_ts_name", value=paste("[Edit]", tsname))
       output$plot_tsboxplot <- renderPlot({
         boxplot(as.matrix(ts), use.cols=TRUE, main="Time series distribution", xlab=names(ts))
       })
     }
   }, ignoreInit = TRUE)
   
+  observeEvent(input$btn_clearfilterconsole, {
+    print_to_output("txt_ts_filtered", "", leading=FALSE, newline=FALSE, append=FALSE)
+  })
   
-
-  
-  
-  
+  shinyjs::onclick("hider1", shinyjs::toggle(id = "hiding1", anim = TRUE))
+  shinyjs::onclick("hider2", shinyjs::toggle(id = "hiding2", anim = TRUE)) 
+  shinyjs::onclick("hider3", shinyjs::toggle(id = "hiding3", anim = TRUE)) 
+  shinyjs::onclick("hider4", shinyjs::toggle(id = "hiding4", anim = TRUE)) 
   
   
   
@@ -597,23 +758,22 @@ server <- function(input, output, session) {
   
   
   
-  
-  
-  
-  
   #### Graphs page actions ####
   create_graphs_page <- function () {
     nameslist <- create_ts_namelist(TRUE)
-    updateSelectInput(session, "sel_linegraph_ts", label=("Select time series to plot"), choices = nameslist)
+    updateSelectInput(session, "sel_graph_ts", label="Select time series to plot", choices = nameslist)
   }
   
-  observeEvent(input$sel_linegraph_ts, {
-    ts <- get_selected_ts(input$sel_linegraph_ts)
-    output$plot_line <- renderDygraph({
-      dygraph(ts, main = "Plotted time series")
-    })
-  }, ignoreInit = TRUE)
+  shinyjs::onclick("toggle_graphsettings", shinyjs::toggle(id = "graphsettings", anim = TRUE))    
   
+  observeEvent(input$sel_graph_ts, {
+    plot_timeseries()
+  })
+  
+  observeEvent(input$btn_updateplot, {
+    plot_timeseries()
+    shinyjs::hide("graphsettings", anim=TRUE)
+  })
   
   
   
@@ -686,18 +846,44 @@ server <- function(input, output, session) {
   
   observeEvent(input$btn_executeown, {
     codetext <- input$txtin_useranalysis
-    code <- function(x) { eval(parse(text=codetext)) }
-    ts <- get_selected_ts(input$sel_analysists)
-    print_to_output("txtout_analysis", paste0("Running the following code:\n",codetext,"\n\n"))
+    print_to_output("txtout_analysis", paste0("Running the following code:\n",codetext))
     result <- tryCatch({
-      paste0(capture.output(code(ts), type=c("output", "message")), "\n", collapse="\n")
+      if (!is.null(session$userData$env)) {
+        e <- session$userData$env
+      } else {
+        e <- new.env()
+      }
+      ts <- get_selected_ts(input$sel_analysists)
+      plot(ts) # just to make sure recordPlot() doesn't generate errror
+      assign("x", ts, e)
+      parsed <- parse(text=codetext)
+      out <- capture.output(source(exprs=parsed, local=e, spaced=TRUE, echo=TRUE))
+      msgs <- paste0(paste0(out, collapse="\n"),"\n")
+      session$userData$env <- e
+      p <- NULL
+      p <- recordPlot()
+      if (!is.null(p)) {
+        output$plot_analysis <- renderPlot({
+          replayPlot(p)
+        })
+      }
+      msgs
     }, error = function(e) {
-      return(paste0("An error occured: ", conditionMessage(e),"\n",e,"\n", collapse="\n"))
+      return(paste0("An error occured: ", conditionMessage(e),"\n",e,collapse="\n"))
     })
-    print_to_output("txtout_analysis", result)
+    print_to_output("txtout_analysis", result, newline=TRUE)
   })
   
+  observeEvent(input$sel_analysisfunction, {
+    func <- input$sel_analysisfunction
+    updateTextAreaInput(session, "txtin_useranalysis", value=paste0(input$txtin_useranalysis,func,"\n"))
+  }, ignoreInit=TRUE)
+  
   observeEvent(input$btn_clearanalysis, {
-    shinyjs::html(id="txtout_analysis",html="", add=FALSE)
+    print_to_output("txtout_analysis", "", leading=FALSE, newline=FALSE, append=FALSE)
+  })
+  
+  observeEvent(input$btn_clearscript, {
+    updateTextAreaInput(session, "txtin_useranalysis", value="")
   })
 }

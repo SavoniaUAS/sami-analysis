@@ -2,34 +2,7 @@
 <p><em>13.3.2018 Jesse Honkanen</em></p>
 <h3>General info</h3>
 <p>This application is implemented for Savonia University of Applied Sciences project <a href="http://sami.savonia.fi/" target="_blank">Savonia Measurements System (SaMi)</a>. This application's goal is to help extract and transform data for analysis purposes and offer quick basic analysis tools for data explorarion. Measurement data is assumed to be numeric <a href="https://en.wikipedia.org/wiki/Time_series" target="_blank">time series</a> data and other data types are not supported by this application.</p>
-<h4>About application</h4>
-<ul>
-  <li>Implemented using RStudio (v1.1.383)</li>
-  <li>Written completely in R language</li>
-  <li>Uses <a href="https://shiny.rstudio.com/" target="_blank">Shiny</a> (v1.0.5) package from RStudio</li>
-  <li>Requires Shiny Server or RStudio to use</li>
-  <li>Uses many other R packages like Tidyverse, Shinyjs, XTS, DT, Dygraphs...</li>
-  <li>Open Source (MIT license)</li>
-</ul>
-<h4>Features</h4>
-<ul>
-  <li>Loading data from <a href="https://sami.savonia.fi/Manage/Home/Help#json" target="_blank">SaMi HTTP API</a> and converting data to R dataframe and time series</li>
-  <li>Supports loading several Object-Tag combinations. Overlapping variable names are taken into account</li>
-  <li>XTS time series objects are automatically created for each variable. User can edit time series and create new ones</li>
-  <li>Loaded dataset and time series data can be saved in different formats (CSV, Excel, RDS...)</li>
-  <li>Includes some preprocessed datasets to test features</li>
-  <li>Data summary, plotting and data table capabilities</li>
-  <li>Some data analysis </li>
-</ul>
-<h4>Limitations</h4>
-<ul>
-  <li>Only works with numeric data. Drops everything else</li>
-  <li>Performance is poor with larger datasets</li>
-  <li>Changing implementation to working online service is complicated</li>
-  <li>Some parts of code are quite messy, buggy and/or inefficient</li>
-  <li>All planned features are not implemented</li>
-  <li>Uses only a part of R's time series analysis capabilities</li>
-</ul>
+<p>More info can be found from project's <a href="https://github.com/savoniauas/sami-analysis" target="_blank">Github page</a>.</p>
 
 <h3>Data loader page</h3>
 <p>Data needs to be loaded before you can use other tools. There are four options: Make a new SaMi query, Paste a query, Use sample data and Load saved data. Only one dataset (excluding sample data) is saved on disk and overwritten when new data is loaded. Default file names for that data are <em>sami_data.csv</em> and <em>sami_data.rds</em>. You can copy these files if you want to save them.</p>
@@ -57,3 +30,19 @@
 <p>You can view data in an interactive table based on DataTables JS library. Creating data is done in R code (server-side) and only visible data is loaded in browser's memory at any given time. This prevents browser from crashing when datasets are large, but on the other hand, makes downloading data from table using Javascript buttons more cumbersome. You can download the whole dataset from "Data loader" page. If dataset is not large, all rows can be shown by selecting "All" from list.</p>
 
 <h3>Analysis page</h3>
+<p>On this page you can run R code and see the console output and possible plot output. Code is not limited to time series analysis. You can for example install new packages to your R environment and run other arbitrary code like you would in normal R console.</p>
+<p>There are couple of common time series scripts included to get you started. Currently selected time series object is stored to a variable called 'x'. Other time series objects can be found in values$tslist, values$tscreated, values$tscombined lists and loaded dataset is stored to values$data. Variables used in code are saved to a custom environment to avoid overlapping.</p>
+
+<h3>Help for making time series analysis</h3>
+<p>Below you can find some resources to get started with R, Shiny and time series analysis (TSA).</p>
+<ul>
+  <li><a href="http://r4ds.had.co.nz/">R for Data Science</a></li>
+  <li><a href="https://shiny.rstudio.com/tutorial/">Getting started with Shiny</a></li>
+  <li><a href="https://github.com/grabear/awesome-rshiny">Shiny resources</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Time_series">Time Series (Wikipedia)</a></li>
+  <li><a href="https://otexts.org/fpp2/">Forecasting: Principles and Practice</a></li>
+  <li><a href="https://cran.r-project.org/web/views/TimeSeries.html">R time series packages</a></li>
+  <li><a href="http://www.stats.uwo.ca/faculty/aim/tsar/tsar.pdf">Time Series Analysis with R (PDF)</a></li>
+  <li><a href="http://www.stat.pitt.edu/stoffer/tsa4/">Time Series Analysis and Its Applications</a></li>
+</ul>
+
