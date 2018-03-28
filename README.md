@@ -82,7 +82,7 @@ You can download and open SaMi Analysis package in RStudio as described before. 
 You don't have to download application manually. There is a command that can do downloading for you and by default delete files after you are done. If you want to keep files, you can add the following option that saves files to "samianalysis" directory in your current working directory: `destdir = "samianalysis"`. Then you can `setwd("samianalysis")` to move to new directory and use the above command to run app.
 
 ```
-> runGitHub("sami-analysis", "savoniauas")
+> shiny::runGitHub("sami-analysis", "savoniauas")
 ```
 
 You can end Shiny session by pressing red "stop sign" in the upper right corner of RStudio Console or by pressing "Quit Shiny" button in running app. 
@@ -119,12 +119,6 @@ R
 Installing packages may require a long time on the first run. This script installs a snapshot of package versions used when making this application. Required packages are installed to project folder (in subfolder .checkpoint).
 
 When installation is over, SaMi Analysis application should start automatically to the following address: [http://127.0.0.1:5470](http://127.0.0.1:5470)
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
 ## License
 
