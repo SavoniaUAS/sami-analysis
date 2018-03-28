@@ -1,0 +1,17 @@
+div#data_status {
+	color: crimson;
+	font-size: 120%;
+}
+#actbuttons .btn {
+	margin: 5px;
+}
+div#html_tshelp {
+	padding: 10px;
+	background-color: #f5f5f5;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	margin: 15px 0px;
+}
+.checkbox-inline {
+	margin-left: 0 !important;
+}

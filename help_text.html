@@ -1,0 +1,59 @@
+<h2>SaMi data analysis application help</h2>
+<p><em>13.3.2018 Jesse Honkanen</em></p>
+<h3>General info</h3>
+<p>This application is implemented for Savonia University of Applied Sciences project <a href="http://sami.savonia.fi/" target="_blank">Savonia Measurements System (SaMi)</a>. This application's goal is to help extract and transform data for analysis purposes and offer quick basic analysis tools for data explorarion. Measurement data is assumed to be numeric <a href="https://en.wikipedia.org/wiki/Time_series" target="_blank">time series</a> data and other data types are not supported by this application.</p>
+<h4>About application</h4>
+<ul>
+  <li>Implemented using RStudio (v1.1.383)</li>
+  <li>Written completely in R language</li>
+  <li>Uses <a href="https://shiny.rstudio.com/" target="_blank">Shiny</a> (v1.0.5) package from RStudio</li>
+  <li>Requires Shiny Server or RStudio to use</li>
+  <li>Uses many other R packages like Tidyverse, Shinyjs, XTS, DT, Dygraphs...</li>
+  <li>Open Source (MIT license)</li>
+</ul>
+<h4>Features</h4>
+<ul>
+  <li>Loading data from <a href="https://sami.savonia.fi/Manage/Home/Help#json" target="_blank">SaMi HTTP API</a> and converting data to R dataframe and time series</li>
+  <li>Supports loading several Object-Tag combinations. Overlapping variable names are taken into account</li>
+  <li>XTS time series objects are automatically created for each variable. User can edit time series and create new ones</li>
+  <li>Loaded dataset and time series data can be saved in different formats (CSV, Excel, RDS...)</li>
+  <li>Includes some preprocessed datasets to test features</li>
+  <li>Data summary, plotting and data table capabilities</li>
+  <li>Some data analysis </li>
+</ul>
+<h4>Limitations</h4>
+<ul>
+  <li>Only works with numeric data. Drops everything else</li>
+  <li>Performance is poor with larger datasets</li>
+  <li>Changing implementation to working online service is complicated</li>
+  <li>Some parts of code are quite messy, buggy and/or inefficient</li>
+  <li>All planned features are not implemented</li>
+  <li>Uses only a part of R's time series analysis capabilities</li>
+</ul>
+
+<h3>Data loader page</h3>
+<p>Data needs to be loaded before you can use other tools. There are four options: Make a new SaMi query, Paste a query, Use sample data and Load saved data. Only one dataset (excluding sample data) is saved on disk and overwritten when new data is loaded. Default file names for that data are <em>sami_data.csv</em> and <em>sami_data.rds</em>. You can copy these files if you want to save them.</p>
+<p>Active dataset can be downloaded from application in different formats.</p>
+<p>Filtering data can be useful if you want to drop unnecessary sensors. There is an option to overwrite file on disk.</p>
+<p>Once data is loaded and filtered you can start using other pages of application.</p>
+
+<h3>Edit time series page</h3>
+<p>On this page you can edit automatically created time series objects, create random time series objects or combine time series for downloading and multivariate analysis.</p>
+<p>Loading or filtering data creates automatically time series objects from active dataset. These are displayed in a list where variables are renamed if active dataset contains Object and Tag fields (variables are not renamed inside time series objects).</p>
+<p>You can create new time series by using existing variables. First choose time series to edit from a list. Then change time frame if you want.</p>
+<p>Changing time series granularity means downsampling or upsampling time series. You can for example change daily data to monthly data and recalculate values by using various functions (count, mean, sum...).</p>
+<p>If there are missing timestamps in dataset, those can be created and filled. You can choose what to do with empty values. Usually it's not a good idea to leave empty values to dataset if calculations need to be made. Dropping empty values also drops timestamps of those values. You can use some given value (0 is usually a decent choice), use previous or next valid value or interpolate values. Zoo packages na.approx is the default method.</p>
+<p>If you don't choose to aggregate data, you can choose to recalculate values. This can be done after creating aggregated time series also.</p>
+<p>Creating random time series can be useful for testing purposes. There are couple of ready functions for creating random time series.</p>
+<p>Time series are only single variable by default. You can combine time series by choosing "Combined time series". You get a list of available time series and can choose options for combining series. Combining can be tricky if timestamps are not identical. That's why it may be good idea to aggregate existing time series to the same granularity before combining them. You can choose to only keep timestamps that are shared among series or keep all timestamps (missing values are left empty).</p>
+
+<h3>Data summary page</h3>
+<p>Gives summary about loaded dataset and created time series objects.</p>
+
+<h3>Data plotting page</h3>
+<p>Only line graphs are supported at the moment.</p>
+
+<h3>Data table page</h3>
+<p>You can view data in an interactive table based on DataTables JS library. Creating data is done in R code (server-side) and only visible data is loaded in browser's memory at any given time. This prevents browser from crashing when datasets are large, but on the other hand, makes downloading data from table using Javascript buttons more cumbersome. You can download the whole dataset from "Data loader" page. If dataset is not large, all rows can be shown by selecting "All" from list.</p>
+
+<h3>Analysis page</h3>

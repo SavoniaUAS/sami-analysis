@@ -1,0 +1,151 @@
+Information about Savonia SaMi analysis service example datasets
+Author: Jesse Honkanen
+3/2018
+
+===================
+earthquakes.csv
+
+Description: Significant (over 5.5 magnitude) earthquakes from 1965 to 2016. Location and strenght are given.
+
+Data: 23406 rows, 7 fields, from beginning of 1965 to end of 2016
+
+Fields
+Timestamp: Date of earthquake (time is dropped)
+ID: Eatrhquakes ID
+Scale: Seismic Magnitude Scale
+Latitude: Self-explanatory
+Longitude: Self-explanatory
+Magnitude: Magnitude of earthquake
+Depth: Depth in km
+
+Source: https://www.kaggle.com/usgs/earthquake-database
+
+===================
+global_temperatures.csv
+
+Description: Monthly global temperature data from 1850 to 2015. Source is combined land-ocean dataset from Berkeley Earth group.
+
+Data: 1992 rows, 5 fields, from 1850 to 2015 monthly
+
+Fields
+Timestamp: Month and year
+LandAverageTemperature: Self-explanatory
+LandMaxTemperature: Self-explanatory
+LandMinTemperature: Self-explanatory
+LandAndOceanAverageTemperature: Combined land and ocean surface average temperature
+
+Source: 
+http://berkeleyearth.org/data/
+
+===================
+helsinki_cyclists.csv
+
+Description: Hourly count of cyclists passing observation points in Helsinki from January 2014 to March 2017. There are total 16 observation points of which only 7 were active right from the beginning. All observation points are active from 2015-05-07. You can find some data analysis from http://naytadata.com/2017/12/13/pyorailijamaarat-helsingissa/
+
+Data: 28464 rows (of which 15501 complete), 17 fields, hourly data from 2014-01-01 to 2017-03-31
+
+Fields
+Timestamp: Day and hour
+Huopalahti_asema: first observation 2015-05-07
+Kaisaniemi: first observation 2014-01-01
+Kulosaaren_silta_etela: first observation 2015-05-07
+Kulosaaren_silta_pohjoinen: first observation 2015-05-07
+Kuusisaarentie: first observation 2015-05-07
+Luattasaaren_silta_etela: first observation 2014-10-15
+Merikannontie: first observation 2014-10-15
+Munkkiniemen_silta_etela: first observation 2014-01-01
+Munkkiniemi_silta_pohjoinen: first observation 2014-01-01
+Heperian_puisto: first observation 2014-01-01
+Pitkasilta_ita: first observation 2014-10-15
+Pitkasilta_lansi: first observation 2014-01-01
+Lauttasaaren_silta_pohjoinen: first observation 2014-10-15
+Ratapihantie: first observation 2015-05-07
+Etelaesplanadi: first observation 2014-01-01
+Baana: first observation 2014-01-01
+
+Source: 
+https://www.avoindata.fi/data/fi/dataset/helsingin-pyorailijamaarat
+
+===================
+helsinki_energy_consumption.csv
+
+Description: Helsinki metropolitan area (Helsinki, Espoo, Vantaa, Kauniainen) energy consumption (kWh) per capita from 2000 to 2015 (and 1990). Divided in transportation, warming, electrocity and other. Formatted in similar fashion as SaMi data (Object, Tag and Note fields).
+
+Data: 85 rows, 14 fields, yearly from 2000 to 2015 + 1990
+
+Fields
+Datetime: Yearly data
+Object: Pääkaupunkiseutu, Helsinki, Vantaa, Espoo, Kauniainen
+Tag: "Per asukas"
+Note: "Lämmitystavekorjattu, kWh"
+Variables: Value is kWh per capita per year
+Kaukolämpö, Öljylämmitys, Sähkölämmitys, Kulutussähkö, Henkilöautot, Muu tieliikenne, Raideliikenne, Laivat ja veneet, Muu polttoaine, Yhteensä
+
+Source: https://www.avoindata.fi/data/fi/dataset/paakaupunkiseudun-energiankulutus
+
+===================
+life_expectancy.csv
+
+Description: Life expectancy at birth by country from 1960 to 2015. 29 countries included
+
+Data: 56 rows, 30 fields, yearly from 1960 to 2015
+
+Fields: 
+Year
+29 Countries
+
+Source: https://data.world/makeovermonday/life-expectancy-at-birth-by-country
+
+===================
+
+nokia_shares.csv
+
+Description: Nokia Oyj shares on Nasdaq Nordic. Uses OHLC format
+
+Data: 5273 rows, 9 fields, daily from 1997-01-02 to 2017-12-29 (only normal workdays)
+
+Fields
+Timestamp: day
+Opening: opening price
+High: high price of day
+Low: low price of day
+Closing: closing price
+Average: average price of day
+Volume: Stocks sold
+Turnover: Turnover
+Trades: Total trades
+
+Source: http://www.nasdaqomxnordic.com/aktier/microsite?Instrument=HEX24311
+
+===================
+omxh25.csv
+
+Description: OMX Helsinki 25 (OMXH25) is a stock market index for the Helsinki Stock Exchange (Nasdaq Helsinki). It is a market value weighted index that consists of the 25 most-traded stock classes. Data is OHLC financial data.
+
+Data: 4101 rows, 5 fields, daily from 2001-09-04 to 2017-12-29 (only normal workdays)
+
+Fields
+Timestamp: Day
+Opening: opening index
+High: high index of day
+Low: low index of day
+Closing: closing index
+
+Source: http://www.nasdaqomxnordic.com/index/index_info?Instrument=FI0008900006
+
+===================
+savonia_weather.csv
+
+Description: Temperature data from Savonia Weather Service. Extracted from 'observeweather.xml' file.
+
+Data: 216 rows, 4 fields, monthly from January 2000 to December 2017
+
+Fields
+Timestamp: Month
+Average: Average temperature of day (in Celsius)
+Max: Maximum temperature of day (in Celsius)
+Max: Minimum temperature of day (in Celsius)
+
+Source: http://weather.savonia.fi/
+
+===================
