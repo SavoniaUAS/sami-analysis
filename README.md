@@ -55,7 +55,7 @@ The following instructions can be used to install on different systems (Windows,
 ```
 R.version
 ```
-3. Download SaMi Analyse project from GitHub if you haven't done so already ([here's the latest ZIP](../archive/master.zip)).
+3. Download SaMi Analyse project from GitHub if you haven't done so already ([here's the latest ZIP](../blob/archive/master.zip)).
 
 4. Unzip master.zip to some folder and open `sami_analysis.Rproj` from that folder to RStudio (File -> Open Project...). You can check the current project directory by the following command.
   
