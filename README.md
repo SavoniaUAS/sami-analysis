@@ -48,14 +48,14 @@ The following instructions can be used to install on different systems (Windows,
 
 1. You need to install [R environment](https://cloud.r-project.org/) to run this application. [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/#download) is also recommended, but not required. For Windows machine, you may need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) or all the features may not work (for example Excel export). Try installing it if you get errors during installation. On Linux you need to install r-base and r-base-dev.
   
-  The following instructions assume that you have [R](https://cloud.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/#download) installed on your computer. 
+    The following instructions assume that you have [R](https://cloud.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/#download) installed on your computer. 
 
 2. Start RStudio and ensure that it finds the R environment. Run the following in the RStudio "Console" window and check that R is installed.
   
 ```
 R.version
 ```
-3. Download SaMi Analyse project from GitHub if you haven't done so already ([here's the latest ZIP](archive/master.zip)).
+3. Download SaMi Analyse project from GitHub if you haven't done so already ([here's the latest ZIP](../archive/master.zip)).
 
 4. Unzip master.zip to some folder and open `sami_analysis.Rproj` from that folder to RStudio (File -> Open Project...). You can check the current project directory by the following command.
   
@@ -65,9 +65,9 @@ getwd()
 
 5. Install required R packages. 
   
-  There are two ways to achieve this. You can install the latest packages globally or install snapshot of packages to be used only in this project. Latest packages may not be backwards-compatible with packages used in this project and cause unexpected bugs. Pick one method first and try another method if the first one doesn't work.
+    There are two ways to achieve this. You can install the latest packages globally or install snapshot of packages to be used only in this project. Latest packages may not be backwards-compatible with packages used in this project and cause unexpected bugs. Pick one method first and try another method if the first one doesn't work.
 
-  - **Install required packages globally**
+  i. **Install required packages globally**
 
     You can install all packages to your R environment to be able to use in other projects. You can achieve this by running the following command in RStudio console. 
   
@@ -77,9 +77,9 @@ getwd()
                     "forecast", "TTR", "quantmod", "KernSmooth", "tictoc"))
 ```
 
-  - **Install snapshot of packages in the project folder**
+  ii. **Install snapshot of packages to the project folder**
   
-    If you want to install packages used when this application was made use the following command. This installs [checkpoint](https://cran.r-project.org/web/packages/checkpoint/vignettes/checkpoint.html)-package which is in turn used to install other required packages to the project folder. The first run will take some time because it installs many packages, but subsequent runs will be much faster. Only checkpoint-package is installed globally to your R system and other packages are used only in this application. Installing required packages may take as long as 30 minutes on the first run. Wait patiently. A browser window will open after installation.
+    If you want to install packages used when this application was made, use the following command. This installs [checkpoint](https://cran.r-project.org/web/packages/checkpoint/vignettes/checkpoint.html)-package which is in turn used to install other required packages to the project folder. The first run will take some time because it installs many packages, but subsequent runs will be much faster. Only checkpoint-package is installed globally to your R system and other packages are used only in this application. Installing required packages may take as long as 30 minutes on the first run. Wait patiently. A browser window will open after installation.
 
 ```
 > source("run.R")
@@ -87,25 +87,28 @@ getwd()
 
 6. Running the application
 
-  If you used the first method, you can use the following command.
+    If you used the second method above, you can run the application by using `source("run.R")`. 
+
+    If you used the first method, you can use the following command.
   
 ```
 > shiny::runApp(launch.browser=TRUE)
+
 ```
-  If you used the second method above, you can run the application by using `source("run.R")`. 
 
 7. Stopping the application
 
-  You can end Shiny session by pressing "Quit Shiny" in browser window or by pressing "stop sign" in the upper right corner of Console.
+    You can end Shiny session by pressing "Quit Shiny" in browser window or by pressing "stop sign" in the upper right corner of Console.
 
 ### Installing and running with command line on Linux
 
 You can use the following commands to install SaMi Analysis on a Linux system. Windows command line installation is quite similar, but not covered here. These instructions assume that you have basic understanding of using command line in Linux.
 
-Install r-base and r-base-dev to your Linux system. You can find more information from [R homesite](https://cloud.r-project.org/). Below is an example on Ubuntu/Debian based system.
+Install at least r-base and r-base-dev to your Linux system. You can find more information from [R homesite](https://cloud.r-project.org/). Below is an example on Ubuntu/Debian based system. On my test machine I also needed to install libblas-dev and liblapack-dev, but you may not need those.
 
 ```
 sudo apt-get install r-base r-base-dev
+sudo apt-get install libblas-dev liblapack-dev
 ```
 Create a directory for the project and download project from GitHub. Below is an example.
 
@@ -121,13 +124,13 @@ Created folder contains a file called `run.R` which is a script to install requi
 chmod +x run.R
 ./run.R
 ```
-Alternatively you can run R session and start file from there. You can quit R session via q() command or if the Shiny is running, use Ctrl-Z.
+Alternatively you can run R session and start file from there. You can quit R session via `q()` command or if the Shiny is running, use Ctrl-Z.
 
 ```
 R
 > source("run.R")
 ```
-Installing packages may require a long time on the first run. This script installs a snapshot of package versions used when making this application. Required packages are installed to project folder (in subfolder .checkpoint).
+Installing packages may require a long time on the first run. This script installs a snapshot of package versions used when making this application. Required packages are installed to project folder (subfolder .checkpoint).
 
 When installation is over, SaMi Analysis application should start automatically to the following address: [http://127.0.0.1:5470](http://127.0.0.1:5470)
 
