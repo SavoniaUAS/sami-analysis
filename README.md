@@ -67,7 +67,7 @@ getwd()
   
     There are two ways to achieve this. You can install the latest packages globally or install snapshot of packages to be used only in this project. Latest packages may not be backwards-compatible with packages used in this project and cause unexpected bugs. Pick one method first and try another method if the first one doesn't work.
 
-  * **Install required packages globally**
+  - **Install required packages globally**
 
       You can install all packages to your R environment to be able to use in other projects. You can achieve this by running the following command in RStudio console. 
   
@@ -77,9 +77,10 @@ getwd()
                     "forecast", "TTR", "quantmod", "KernSmooth", "tictoc"))
 ```
 
-  * **Install snapshot of packages to the project folder**
+  - **Install snapshot of packages to the project folder**
   
-      If you want to install packages used when this application was made, use the following command. This installs [checkpoint](https://cran.r-project.org/web/packages/checkpoint/vignettes/checkpoint.html)-package which is in turn used to install other required packages to the project folder. The first run will take some time because it installs many packages, but subsequent runs will be much faster. Only checkpoint-package is installed globally to your R system and other packages are used only in this application. Installing required packages may take as long as 30 minutes on the first run. Wait patiently. A browser window will open after installation.
+    If you want to install packages used when this application was made, use the following command. This installs [checkpoint](https://cran.r-project.org/web/packages/checkpoint/vignettes/checkpoint.html)-package which is in turn used to install other required packages to the project folder. The first run will take some time because it installs many packages, but subsequent runs will be much faster. Only checkpoint-package is installed globally to your R system and other packages are used only in this application. Installing required packages may take as long as 30 minutes on the first run. Wait patiently. A browser window will open after installation.
+>>>>>>> 471abf585f56f0933ce35533ff8ea6cfe5c195d0
 
 ```
 > source("run.R")
