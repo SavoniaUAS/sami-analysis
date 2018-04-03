@@ -22,7 +22,8 @@ ui <- dashboardPage(
   dashboardBody(
     useShinyjs(),
     tags$head(
-      tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
+      tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
+	  tags$link(rel = "icon", type = "image/x-icon", href = "savonia_icon.ico")
     ),
     tabItems(
       tabItem(tabName="loader",

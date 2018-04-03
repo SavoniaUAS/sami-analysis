@@ -1,4 +1,7 @@
-library(RInno)
+if(!require(RInno)) {
+  install.packages("RInno")
+  library(RInno)
+}
 # Uncomment if you need to install inno setup
 #RInno::install_inno()
 
@@ -29,11 +32,18 @@ create_app(
 	dir_out = "installer",
 	publisher = "Savonia",
 	pub_url   = "sami.savonia.fi",
+	main_url   = "sami.savonia.fi",
 	default_dir = "userdocs",
 	privilege = "lowest",
 	pkgs = packages,
 	include_R = TRUE,
-	R_version = "3.4.4"
+	R_version = "3.4.4",
+	info_before = "infobefore.txt",
+	info_after = "infoafter.txt",
+	app_version = "0.8.0",
+	compression = "bzip",
+	license_file = "LICENSE",
+	name = "SaMi Analysis"
 )
 
 compile_iss()

@@ -2,6 +2,8 @@
 
 This is a data exploration and transforming tool for [Savonia Measurements System (SaMi)](http://sami.savonia.fi/). Goal of this project is to help exploratory data analysis of [time series](https://en.wikipedia.org/wiki/Time_series) data (for example recorded sensor values). Tool can also be used for just loading and transforming SaMi data to different format or as basis for more general time series analysis web app.
 
+There are some screenshots in the "screenshots" folder.
+
 ## Features
 
 - Written completely in R language as [Shiny](https://shiny.rstudio.com/) web app
@@ -18,7 +20,7 @@ This is a data exploration and transforming tool for [Savonia Measurements Syste
 ## Limitations
 
 - Only numerical measurement data is supported. Non-numeric data is automatically dropped from dataset
-- Not well suited for handling larger datasets (big data). Even 100 000 measurements may be too much for this application. Larger datasets need to be preprosessed on server side
+- Not well suited for handling larger datasets (big data). Even 100 000 measurements may be too much for this application. Larger datasets need to be preprosessed (on server side or other program)
 - Currently not suitable for running on server in multiuser environment. Some changes need to be done to achieve that
 - Many parts of code are quite messy, buggy and/or inefficient
 - All planned features are not implemented
@@ -30,62 +32,71 @@ You can install SaMi Analysis to your local computer (Linux, Windows or Mac) by 
 
 ### Installing on Windows with installer
 
-The easiest way to get started on a Windows machine is to use ready to run installer (Download).
+The easiest way to get started on a Windows machine is to use ready to run installer. Installer includes R environment (v3.4.4) and required R libraries. If installer doesn't work for you, try some other method below.
 
-Download and run the installer. The installer will guide you through the installation progress. The default installation folder is user's Documents folder, so installation shouldn't require administrator rights. 
-
-After installation run SaMi Analysis. Some packages still need to be installed on the first run. This may require many minutes.
-
-If installer doesn't work for you, use the following instructions.
+1. [Download](https://github.com/SavoniaUAS/sami-analysis/releases/download/v0.8.2/SaMi_Analysis_installer_win_x64_v0.8.2_full.exe) and run the installer.
+2. Application is installed to Windows user's "Documents" folder by default. Installation shouldn't require administrator rights. Installing application requires about 500 Mt of hard disk space
+3. Unpacking libraries may require many minutes. Wait till installation is over
+4. You can run SaMi Analysis after installation is over or from start-menu
+5. Running SaMi Analysis opens a web-browser window. You can close the application simply by closing this window
+6. Program state and time series objects are not saved between sessions so make sure you download data when you are done!
+7. You can uninstall SaMi Analysis and R environment from Windows control panel
 
 ### Installing and running with RStudio
 
 The following instructions can be used to install on different systems (Windows, Linux, Mac).
 
-You need to install [R environment](https://cloud.r-project.org/) to run this application. [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/#download) is also recommended, but not required. For Windows machine, you may need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) or all the features may not work. Try installing it if you get errors during installation. On Linux you need to install r-base and r-base-dev.
+1. You need to install [R environment](https://cloud.r-project.org/) to run this application. [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/#download) is also recommended, but not required. For Windows machine, you may need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) or all the features may not work (for example Excel export). Try installing it if you get errors during installation. On Linux you need to install r-base and r-base-dev.
+  
+  The following instructions assume that you have [R](https://cloud.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/#download) installed on your computer. 
 
-The following instructions assume that you have [R](https://cloud.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/#download) installed on your computer. 
-
-Start RStudio and ensure that it finds the R environment. Run the following in the RStudio "Console" window and check that R is installed.
-
+2. Start RStudio and ensure that it finds the R environment. Run the following in the RStudio "Console" window and check that R is installed.
+  
 ```
 R.version
 ```
-Download SaMi Analyse project from GitHub if you haven't done so already (here's the latest ZIP).
+3. Download SaMi Analyse project from GitHub if you haven't done so already ([here's the latest ZIP](archive/master.zip)).
 
-Unzip master.zip to some folder and open "sami_analysis.Rproj" from that folder to RStudio (File -> Open Project...).
+4. Unzip master.zip to some folder and open `sami_analysis.Rproj` from that folder to RStudio (File -> Open Project...). You can check the current project directory by the following command.
+  
+```
+getwd()
+```
 
-From RStudio Console run the following command. This installs [checkpoint](https://cran.r-project.org/web/packages/checkpoint/vignettes/checkpoint.html)-package which is in turn used to install other required packages to the project folder. The first run will take some time because it installs many packages, but subsequent runs will be much faster. Only checkpoint-package is installed globally to your R system and other packages are used only in this application. Installing required packages may take as long as 30 minutes on the first run. Wait patiently. A browser window will open after installation.
+5. Install required R packages. 
+  
+  There are two ways to achieve this. You can install the latest packages globally or install snapshot of packages to be used only in this project. Latest packages may not be backwards-compatible with packages used in this project and cause unexpected bugs. Pick one method first and try another method if the first one doesn't work.
+
+  - **Install required packages globally**
+
+    You can install all packages to your R environment to be able to use in other projects. You can achieve this by running the following command in RStudio console. 
+  
+```
+> install.packages(c("shiny", "shinydashboard", "shinyjs", "jsonlite","tidyverse",
+                    "dygraphs", "highcharter", "xts", "DT", "openxlsx", "pryr",
+                    "forecast", "TTR", "quantmod", "KernSmooth", "tictoc"))
+```
+
+  - **Install snapshot of packages in the project folder**
+  
+    If you want to install packages used when this application was made use the following command. This installs [checkpoint](https://cran.r-project.org/web/packages/checkpoint/vignettes/checkpoint.html)-package which is in turn used to install other required packages to the project folder. The first run will take some time because it installs many packages, but subsequent runs will be much faster. Only checkpoint-package is installed globally to your R system and other packages are used only in this application. Installing required packages may take as long as 30 minutes on the first run. Wait patiently. A browser window will open after installation.
 
 ```
 > source("run.R")
 ```
 
-You can end Shiny session by pressing red "stop sign" in the upper right corner of Console or "Esc" button of your keyboard when Console is active.
+6. Running the application
 
-
-### Installing and running with RStudio alternative method
-
-Alternatively to the abowe you can install all packages to your R environment to be able to use in other projects. In that case you can run the following command. Note that this command installs latest versions of packages which may not be compatible with older applications and cause strange bugs. Using checkpoint installs package versions available on set day.
-
-```
-> install.packages(c("shiny", "shinydashboard", "shinyjs", "jsonlite","tidyverse",
-                    "dygraphs", "highcharter", "zoo", "xts", "DT","openxlsx", "pryr",
-                    "forecast", "TTR", "quantmod", "KernSmooth", "tictoc"))
-> runApp(launch.browser=TRUE)
-```
-You can download and open SaMi Analysis package in RStudio as described before. You can then start application by the following command.
-
+  If you used the first method, you can use the following command.
+  
 ```
 > shiny::runApp(launch.browser=TRUE)
 ```
-You don't have to download application manually. There is a command that can do downloading for you and by default delete files after you are done. If you want to keep files, you can add the following option that saves files to "samianalysis" directory in your current working directory: `destdir = "samianalysis"`. Then you can `setwd("samianalysis")` to move to new directory and use the above command to run app.
+  If you used the second method above, you can run the application by using `source("run.R")`. 
 
-```
-> shiny::runGitHub("sami-analysis", "savoniauas")
-```
+7. Stopping the application
 
-You can end Shiny session by pressing red "stop sign" in the upper right corner of RStudio Console or by pressing "Quit Shiny" button in running app. 
+  You can end Shiny session by pressing "Quit Shiny" in browser window or by pressing "stop sign" in the upper right corner of Console.
 
 ### Installing and running with command line on Linux
 
